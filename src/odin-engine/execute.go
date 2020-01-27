@@ -1,11 +1,11 @@
 package main
 
 import (
-        "odin/src/odin-engine/executor"
+        "src/odin-engine/executor"
         "fmt"
         "io/ioutil"
         "net/http"
-	"github.com/go-chi/chi"
+		"github.com/go-chi/chi"
 )
 
 type executeResource struct{}
