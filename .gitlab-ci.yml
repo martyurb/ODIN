@@ -1,4 +1,30 @@
-test:
-  image: golang:1.13
+image: node:8.17.0
+
+cache:
+  paths:
+    - src/webapp/server/node_modules
+
+stages:
+  - BackendTests
+
+install_dependencies:
+  stage: build
   script:
-    - go test ./...
+    - npm install
+  artifacts:
+    paths:
+      - src/webapp/server/node_modules
+
+expresstests:
+  stage: BackendTests
+  script:
+    - cd src/webapp/server
+    - npm install
+    - npm start &
+    - npm test
+only:
+  refs :
+    - master
+    - webapp/*
+  changes:
+    - src/webapp/*
