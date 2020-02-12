@@ -3,28 +3,41 @@ image: node:8.17.0
 cache:
   paths:
     - src/webapp/server/node_modules
+    - src/webapp/client/node_modules
 
 stages:
-  - BackendTests
+  - backendTests
+  - frontEndTests
+  - build
 
-install_dependencies:
-  stage: build
-  script:
-    - npm install
-  artifacts:
-    paths:
-      - src/webapp/server/node_modules
-
-expresstests:
-  stage: BackendTests
+backend:test:
+  stage: backendTests
   script:
     - cd src/webapp/server
     - npm install
     - npm start &
     - npm test
-only:
-  refs :
-    - master
-    - webapp/*
-  changes:
-    - src/webapp/*
+
+frontend:test:
+  variables:
+    CLI_VERSION: 6.1.5
+  stage: frontEndTests
+  image: trion/ng-cli-karma:${CLI_VERSION}
+  script:
+    - cd src/webapp/client
+    - npm install
+    - ./node_modules/@angular/cli/bin/ng test --progress false --watch false
+  artifacts:
+    paths:
+      - src/webapp/client/node_modules
+
+frontEnd:build:
+  stage: build
+  needs: ["frontend:test", "backend:test"]
+  script:
+    - cd src/webapp/client
+    - npm install
+    - ./node_modules/@angular/cli/bin/ng build --prod --base-href ./
+  artifacts:
+    paths:
+      - src/webapp/client/node_modules
