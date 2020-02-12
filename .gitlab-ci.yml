@@ -1,43 +1,69 @@
-image: node:8.17.0
-
-cache:
-  paths:
-    - src/webapp/server/node_modules
-    - src/webapp/client/node_modules
-
+variables:
+  CLI_VERSION: 6.1.5
+  DIST_DIR: dist/
+  
 stages:
-  - backendTests
-  - frontEndTests
+  - init
+  - test
   - build
 
+cache:
+  key: ${CI_COMMIT_SHA}
+  paths:
+    - src/webapp/client/node_modules
+
+before_script:
+- cd src/webapp/client
+- "[ -d node_modules ] || npm ci"
+
+init:
+  stage: init
+  image: trion/ng-cli-karma:${CLI_VERSION}
+  script: ['']
+  cache:
+    policy: pull-push
+    key: ${CI_COMMIT_SHA}
+    paths: ['src/webapp/client/node_modules']
+
+lint:nglint:
+  stage: test
+  image: trion/ng-cli-karma:${CLI_VERSION}
+  allow_failure: true
+  script:
+    - ng lint
+
+frontend:test:
+  stage: test
+  image: trion/ng-cli-karma:${CLI_VERSION}
+  allow_failure: false
+  script:
+    - ./node_modules/@angular/cli/bin/ng test --code-coverage --progress false --watch false
+  coverage: '/Lines \W+: (\d+\.\d+)%.*/'
+  artifacts:
+    paths:
+      - src/webapp/client/coverage/
+
+frontend:build:
+  stage: build
+  image: trion/ng-cli-karma:${CLI_VERSION}
+  needs: ["frontend:test"]
+  script:
+    - ./node_modules/@angular/cli/bin/ng build --prod 
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - src/webapp/client/$DIST_DIR
+
 backend:test:
-  stage: backendTests
+  stage: test
+  before_script: ['']
+  image: trion/ng-cli-karma:${CLI_VERSION}
+  allow_failure: true
   script:
     - cd src/webapp/server
     - npm install
-    - npm start &
     - npm test
-
-frontend:test:
-  variables:
-    CLI_VERSION: 6.1.5
-  stage: frontEndTests
-  image: trion/ng-cli-karma:${CLI_VERSION}
-  script:
-    - cd src/webapp/client
-    - npm install
-    - ./node_modules/@angular/cli/bin/ng test --progress false --watch false
-  artifacts:
-    paths:
-      - src/webapp/client/node_modules
-
-frontEnd:build:
-  stage: build
-  needs: ["frontend:test", "backend:test"]
-  script:
-    - cd src/webapp/client
-    - npm install
-    - ./node_modules/@angular/cli/bin/ng build --prod --base-href ./
-  artifacts:
-    paths:
-      - src/webapp/client/node_modules
+  cache:
+    policy: pull-push
+    key: ${CI_COMMIT_SHA}
+    paths: ['src/webapp/server/node_modules']
