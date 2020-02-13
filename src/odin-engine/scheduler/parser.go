@@ -70,7 +70,8 @@ func getCronMonth(values map[string]string, currentDom string, key string) (stri
     return result, currentDom
 }
 
-func Execute(filePath string) {
+func Execute(filePath string) []StringFormat {
+    var asf []StringFormat
     dowValues := getDowMap()
     domValues := getDomMap()
     monValues := getMonMap()
@@ -87,10 +88,16 @@ func Execute(filePath string) {
             sf.Dow = getCron(dowValues, key)
             sf.Dom = getCron(domValues, key)
             sf.Mon, sf.Dom = getCronMonth(monValues, sf.Dom, key)
-            sf.Hour, sf.Minute = splitOnKeyword(formattedRules[i][1], ":")[0], splitOnKeyword(formattedRules[i][1], ":")[1]
-            fmt.Println(sf.Minute, sf.Hour, sf.Dom, sf.Mon, sf.Dow)
+            sf.Hour = splitOnKeyword(formattedRules[i][1], ":")[0]
+            if splitOnKeyword(formattedRules[i][1], ":")[1] == "00" {
+                sf.Minute = "0"
+            } else {
+                sf.Minute = splitOnKeyword(formattedRules[i][1], ":")[1]
+            }
+            asf = append(asf, sf)
         }
     } else {
         fmt.Println("Odin cannot recognise the schedule found in your Yaml config file.")
     }
+    return asf
 }

@@ -1,8 +1,9 @@
 package executor
 
 import (
-    "os"
+    "fmt"
     "os/exec"
+    "strings"
 )
 
 type Data struct {
@@ -10,36 +11,46 @@ type Data struct {
     error  error
 }
 
-
-func exists(name string) bool {
-    _, err := os.Stat(name)
-    if os.IsNotExist(err) {
-        return false
-    }
-    return err == nil
-}
-
 func runCommand(ch chan<- Data, language string, file string) {
     cmd := exec.Command(language, file)
+    // data, err output after job is finished running
     data, err := cmd.CombinedOutput()
+    fmt.Println(string(data))
     ch <- Data{
         error:  err,
         output: data,
     }
 }
 
-func Execute(filename string) bool {
-    if exists(filename) {
-        channel := make(chan Data)
-        language, file := getYaml(filename)
-        dir, _ := os.Getwd()
-        go runCommand(channel, language, dir+"/"+file)
-        res := <-channel
-        if res.error != nil {
-            return false
-        }
-        return true
-    } else {
-        return false
-    }
+func executeYaml(filename string) bool {
+    singleChannel := make(chan Data)
+    path := strings.Split(filename, "/")
+    basePath := strings.Join(path[:len(path)-1], "/")
+    language, file := getYaml(filename)
+    destFile := basePath + "/" + file
+    go runCommand(singleChannel, language, destFile)
+    res := <-singleChannel
+    ReviewError(res.error, "bool")
+    return true
 }
+
+func executeLang(contents string) bool {
+    contentList := strings.Split(contents, " ")
+    language, filename := contentList[0], contentList[1]
+    channel := make(chan Data)
+    go runCommand(channel, language, filename)
+    res := <-channel
+    ReviewError(res.error, "bool")
+    return true
+}
+
+func Execute(contents string, process int) bool {
+    switch process {
+        case 0:
+            return executeLang(contents)
+        case 1:
+            return executeYaml(contents)
+    }
+    return false
+}
+

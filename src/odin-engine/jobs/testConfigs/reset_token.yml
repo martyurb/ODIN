@@ -4,7 +4,7 @@ provider:
 job:
   name: "test_job"
   description: "This job should say hello"
-  language: "node"
-  file: "testConfigs/testScripts/main.js"
+  language: "python3"
+  file: "main.py"
   schedule: "every September 9th at 13:00 and every March 21st at 13:00"
 
