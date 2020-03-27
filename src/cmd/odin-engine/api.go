@@ -8,8 +8,8 @@ import (
     "github.com/go-chi/chi"
     "github.com/go-chi/chi/middleware"
 
-    "gitlab.computing.dcu.ie/mcdermj7/2020-ca400-urbanam2-mcdermj7/src/odin-engine/jobs"
-    "gitlab.computing.dcu.ie/mcdermj7/2020-ca400-urbanam2-mcdermj7/src/odin-engine/resources"
+    "gitlab.computing.dcu.ie/mcdermj7/2020-ca400-urbanam2-mcdermj7/src/cmd/odin-engine/jobs"
+    "gitlab.computing.dcu.ie/mcdermj7/2020-ca400-urbanam2-mcdermj7/src/internal/resources"
 )
 
 // set Odin ENV variables to be used by running jobs via Odin SDK 

@@ -11,8 +11,8 @@ import (
     "go.mongodb.org/mongo-driver/bson"
     "github.com/go-chi/chi"
 
-    "gitlab.computing.dcu.ie/mcdermj7/2020-ca400-urbanam2-mcdermj7/src/odin-engine/jobs"
-    "gitlab.computing.dcu.ie/mcdermj7/2020-ca400-urbanam2-mcdermj7/src/odin-engine/resources"
+    "gitlab.computing.dcu.ie/mcdermj7/2020-ca400-urbanam2-mcdermj7/src/cmd/odin-engine/jobs"
+    "gitlab.computing.dcu.ie/mcdermj7/2020-ca400-urbanam2-mcdermj7/src/internal/resources"
 )
 
 // create resource type to be used by the router

@@ -1,0 +1,10 @@
+provider:
+  name: "odin"
+  version: "1.0.0"
+job:
+  name: "scrape_dcufm"
+  description: "scrape DCUfm's listenership"
+  language: "python3"
+  file: "scrape_dcufm.py"
+  schedule: "every minute"
+

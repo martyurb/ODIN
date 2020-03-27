@@ -2,7 +2,7 @@ package scheduler
 
 import (
     "fmt"
-	"testing"
+    "testing"
 )
 
 func TestStripChairs(t *testing.T) {

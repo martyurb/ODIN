@@ -16,7 +16,7 @@ import (
 
     "github.com/sirupsen/logrus"
 
-    "gitlab.computing.dcu.ie/mcdermj7/2020-ca400-urbanam2-mcdermj7/src/odin-engine/resources"
+    "gitlab.computing.dcu.ie/mcdermj7/2020-ca400-urbanam2-mcdermj7/src/internal/resources"
 )
 
 type JobNode struct {

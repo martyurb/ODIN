@@ -5,7 +5,7 @@ import (
     "log"
     "os"
 
-    "gitlab.computing.dcu.ie/mcdermj7/2020-ca400-urbanam2-mcdermj7/src/odin-engine/types"
+    "gitlab.computing.dcu.ie/mcdermj7/2020-ca400-urbanam2-mcdermj7/src/internal/types"
 
     "gopkg.in/yaml.v2"
 )
