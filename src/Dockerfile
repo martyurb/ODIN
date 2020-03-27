@@ -8,7 +8,7 @@ WORKDIR /go/src/odin/
 ADD . .
 
 # Switch WORKDIR to the odin-engine directory
-WORKDIR /go/src/odin/odin-engine
+WORKDIR /go/src/cmd/odin/odin-engine
 
 # Build the odin-engine command inside the container
 RUN go build -o odin-engine
