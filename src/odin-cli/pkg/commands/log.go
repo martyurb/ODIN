@@ -32,6 +32,10 @@ func init() {
 // parameters: id (a string of the required id)
 // returns: nil
 func logJob(id string) {
+    if !checkOdinMembership() {
+        fmt.Println("Cannot get job logs. You are not a member of the `odin` group.")
+        os.Exit(2)
+    }
     if id != "" {
         fileInfo, _ := os.Stat("/etc/odin/jobs/" + id)
         if (os.Getgid() == int(fileInfo.Sys().(*syscall.Stat_t).Gid)) {

@@ -4,6 +4,7 @@ import (
     "bytes"
     "fmt"
     "os"
+
     "github.com/spf13/cobra"
 )
 
@@ -30,6 +31,10 @@ func init() {
 // parameters: id (a string of the required id)
 // returns: nil
 func removeJob(id string) {
+    if !checkOdinMembership() {
+        fmt.Println("Job not removed. You are not a member of the `odin` group.")
+        os.Exit(2)
+    }
     response := makePutRequest("http://localhost:3939/jobs", bytes.NewBuffer([]byte(id + " " + fmt.Sprintf("%d", os.Getuid()))))
     fmt.Println(response)
 }

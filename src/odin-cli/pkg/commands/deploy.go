@@ -12,6 +12,7 @@ import (
     "syscall"
 
     "github.com/spf13/cobra"
+
     "gopkg.in/yaml.v2"
 )
 
@@ -21,7 +22,7 @@ var DeployCmd = &cobra.Command{
     Short: "deploy a job created by user",
     Long:  `This subcommand deploys a job created by the user`,
     Run: func(cmd *cobra.Command, args []string) {
-            deployJob(cmd, args)
+        deployJob(cmd, args)
     },
 }
 
@@ -38,13 +39,11 @@ func init() {
 // parameters: cmd (the definition of *cmd.Command), args (an array of strings passed to the command)
 // returns: nil
 func deployJob(cmd *cobra.Command, args []string) {
-    u, _ := user.Current()
-    groups, _ := u.GroupIds()
-    group, _ := user.LookupGroup("odin")
-    if !checkOdinMembership(groups, group.Gid) {
+    if !checkOdinMembership() {
         fmt.Println("Job not deployed. You are not a member of the `odin` group.")
         os.Exit(2)
     }
+    group, _ := user.LookupGroup("odin")
     gid, _ := strconv.Atoi(group.Gid)
     name, _:= cmd.Flags().GetString("file")
     yaml := unmarsharlYaml(readJobFile(name))
@@ -108,13 +107,3 @@ func getScheduleString(name string) string {
     return ss
 }
 
-func checkOdinMembership(groups []string, groupGid string) bool {
-    odinUser := false
-    for _, g := range groups {
-        if groupGid == g {
-            odinUser = true
-            break
-        }
-    }
-    return odinUser
-}

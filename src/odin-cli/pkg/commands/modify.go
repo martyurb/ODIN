@@ -38,6 +38,10 @@ func init() {
 // parameters: id (a string of the required id), name (a string to change the job name), desc (a string to change the job description), schedule (a string to change the job schedule)
 // returns: nil
 func modifyJob(id string, name string, desc string, schedule string) {
+    if !checkOdinMembership() {
+        fmt.Println("Job not modified. You are not a member of the `odin` group.")
+        os.Exit(2)
+    }
     if id != "" && name == "" && desc == "" && schedule == "" {
         fmt.Println("Please specify which field you want to modify in job " + id + "\n")
     } else {

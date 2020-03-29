@@ -3,9 +3,9 @@ package commands
 import (
     "bytes"
     "fmt"
-    "os"
-    "log"
     "io/ioutil"
+    "log"
+    "os"
 
     "github.com/spf13/cobra"
 )
@@ -33,6 +33,10 @@ func init() {
 // parameters: cmd (the definition of *cmd.Command), args (an array of strings passed to the command)
 // returns: nil
 func executeJob(cmd *cobra.Command, args []string) {
+    if !checkOdinMembership() {
+        fmt.Println("Job not executed. You are not a member of the `odin` group.")
+        os.Exit(2)
+    }
     name, _:= cmd.Flags().GetString("file")
     contents := readJobFileExecute(name)
     fmt.Println(string(contents))

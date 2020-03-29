@@ -1,9 +1,10 @@
 package commands
 
 import (
-    "fmt"
     "bytes"
+    "fmt"
     "io/ioutil"
+    "os"
 
     "github.com/spf13/cobra"
 )
@@ -40,6 +41,10 @@ func init() {
 // parameters: id (a string of the required id)
 // returns: nil
 func statsJob(id string) {
+    if !checkOdinMembership() {
+        fmt.Println("Cannot get job stats. You are not a member of the `odin` group.")
+        os.Exit(2)
+    }
     response := makePostRequest("http://localhost:3939/jobs/info/stats", bytes.NewBuffer([]byte(id)))
     fmt.Println(response)
 }

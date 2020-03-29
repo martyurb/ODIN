@@ -32,6 +32,10 @@ func init() {
 // parameters: id (a string of the required id)
 // returns: nil
 func describeJob(id string) {
+    if !checkOdinMembership() {
+        fmt.Println("Cannot describe any jobs. You are not a member of the `odin` group.")
+        os.Exit(2)
+    }
     response := makePostRequest("http://localhost:3939/jobs/info/description", bytes.NewBuffer([]byte(id + " " + fmt.Sprintf("%d", os.Getuid()))))
     fmt.Println(response)
 }

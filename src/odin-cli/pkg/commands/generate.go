@@ -5,7 +5,9 @@ import (
     "fmt"
     "io/ioutil"
     "log"
+    "os"
     "strings"
+
     "github.com/spf13/cobra"
 )
 
@@ -32,6 +34,10 @@ func init() {
 // parameters: cmd (the definition of *cmd.Command), args (an array of strings passed to the command)
 // returns: nil
 func generateJob(cmd *cobra.Command, args []string) {
+    if !checkOdinMembership() {
+        fmt.Println("Cannot generate config. You are not a member of the `odin` group.")
+        os.Exit(2)
+    }
     name, _:= cmd.Flags().GetString("file")
     if strings.HasSuffix(name, ".yml") || strings.HasSuffix(name, ".yaml") {
         id := generateId()

@@ -7,6 +7,7 @@ import (
     "io/ioutil"
     "net/http"
     "os"
+    "os/user"
 
     "github.com/spf13/cobra"
 )
@@ -92,6 +93,22 @@ func makePutRequest(link string, data *bytes.Buffer) string {
     return string(bodyBytes)
 }
 
+// this function is used to check the current user is a member of the odin group
+// parameters: nil
+// returns: bool (true if the user is a member of the odin group, false if otherwise)
+func checkOdinMembership() bool {
+    u, _ := user.Current()
+    groups, _ := u.GroupIds()
+    group, _ := user.LookupGroup("odin")
+    odinUser := false
+    for _, g := range groups {
+        if group.Gid == g {
+            odinUser = true
+            break
+        }
+    }
+    return odinUser
+}
 
 // -------------------------- SHARED STRUCTS ------------------------ //
 // ------------------------------------------------------------------ //

@@ -28,6 +28,10 @@ func init() {
 // parameters: nil
 // returns: nil
 func listJob() {
+    if !checkOdinMembership() {
+        fmt.Println("Cannot list jobs. You are not a member of the `odin` group.")
+        os.Exit(2)
+    }
     response := makePostRequest("http://localhost:3939/jobs/list", bytes.NewBuffer([]byte(fmt.Sprintf("%d", os.Getuid()))))
     fmt.Print(response)
 }
