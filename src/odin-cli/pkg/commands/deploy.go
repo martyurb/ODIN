@@ -38,14 +38,20 @@ func init() {
 // parameters: cmd (the definition of *cmd.Command), args (an array of strings passed to the command)
 // returns: nil
 func deployJob(cmd *cobra.Command, args []string) {
+    u, _ := user.Current()
+    groups, _ := u.GroupIds()
+    group, _ := user.LookupGroup("odin")
+    if !checkOdinMembership(groups, group.Gid) {
+        fmt.Println("Job not deployed. You are not a member of the `odin` group.")
+        os.Exit(2)
+    }
+    gid, _ := strconv.Atoi(group.Gid)
     name, _:= cmd.Flags().GetString("file")
     yaml := unmarsharlYaml(readJobFile(name))
     currentDir, _ := os.Getwd()
     var job NewJob
     job.ID = yaml.Job.ID
     job.UID = fmt.Sprint(syscall.Getuid())
-    group, _ := user.LookupGroup("odin")
-    gid, _ := strconv.Atoi(group.Gid)
     job.GID = strconv.Itoa(gid)
     job.Name = yaml.Job.Name
     job.Description =  yaml.Job.Description
@@ -102,3 +108,13 @@ func getScheduleString(name string) string {
     return ss
 }
 
+func checkOdinMembership(groups []string, groupGid string) bool {
+    odinUser := false
+    for _, g := range groups {
+        if groupGid == g {
+            odinUser = true
+            break
+        }
+    }
+    return odinUser
+}
