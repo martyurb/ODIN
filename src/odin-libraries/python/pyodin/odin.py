@@ -7,9 +7,12 @@ from time import time
 
 class Odin:
     def __init__(self, config="job.yml", test=False):
-        for file in listdir("/etc/odin/jobs"):
-            if path.exists("/etc/odin/jobs/" + file + "/" + config):
-                self.config = "/etc/odin/jobs/" + file + "/" + config
+        if test == False:
+            for file in listdir("/etc/odin/jobs"):
+                if path.exists("/etc/odin/jobs/" + file + "/" + config):
+                    self.config = "/etc/odin/jobs/" + file + "/" + config
+        else:
+            self.config = "./job.yml"
         try: 
             with open(self.config,"r") as config:
                 configR = config.read()
