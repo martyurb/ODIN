@@ -6,13 +6,14 @@ from pyodin.odin_logger import OdinLogger as logger
 from time import time
 
 class Odin:
-    def __init__(self, config="job.yml", test=False):
-        if test == False:
+    def __init__(self, config="job.yml", test=False, pathType="absolute"):
+        if pathType == "absolute":
             for file in listdir("/etc/odin/jobs"):
                 if path.exists("/etc/odin/jobs/" + file + "/" + config):
                     self.config = "/etc/odin/jobs/" + file + "/" + config
+                    break
         else:
-            self.config = "./job.yml"
+            self.config = config
         try: 
             with open(self.config,"r") as config:
                 configR = config.read()
