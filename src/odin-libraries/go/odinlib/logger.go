@@ -4,7 +4,6 @@ import (
     "context"
     "fmt"
     "os"
-    "time"
 
     "go.mongodb.org/mongo-driver/mongo"
     "go.mongodb.org/mongo-driver/mongo/options"
@@ -18,27 +17,23 @@ func Log(varType string, desc string, value string, id string, timestamp string)
 }
 
 func FindAndInsert(varType string, desc string, value string, id string, timestamp string) bool {
-    client, err := SetupClient()
-    if err != nil {
-	return false
-    }
+    client := SetupClient()
     filter := bson.M{"id": id, "desc": desc, "type": varType}
     update := bson.M{"$set": bson.M{"type": varType, "desc": desc, "value": value, "id": id, "timestamp": timestamp}}
     collection := client.Database("odin").Collection("observability")
-    _, err = collection.UpdateOne(context.TODO(), filter, update, options.Update().SetUpsert(true))
+    _, err := collection.UpdateOne(context.TODO(), filter, update, options.Update().SetUpsert(true))
     return err == nil
 }
 
-func SetupClient() (*mongo.Client, error) {
+func SetupClient() *mongo.Client {
     url, _ := os.LookupEnv("ODIN_MONGODB")
     c := getMongoClient(url)
-    ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
-    err := c.Ping(ctx, readpref.Primary())
+    err := c.Ping(context.Background(), readpref.Primary())
     if err != nil {
         fmt.Println("Cannot connect to MongoDB - check your MongoDB instance is running")
-        c.Disconnect(context.TODO())
+        return nil
     }
-    return c, err
+    return c
 }
 
 func getMongoClient(url string) *mongo.Client {
